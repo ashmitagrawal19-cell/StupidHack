@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="green">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#030906">
+<title>SIGNUP FORM — StupidHack 01</title>
+<style>
+/* ============================================================
+   STUPID FORM // CRT TERMINAL — single file, zero dependencies
+   ============================================================ */
+:root{
+  --glow:1;
+  --cyan:#39d7ff; --mag:#ff54d7; --warn:#ffb02e; --err:#ff4d6d;
+  --font:ui-monospace,"Cascadia Code","JetBrains Mono","Fira Code",Menlo,Consolas,"Liberation Mono",monospace;
+  color-scheme:dark;
+}
+:root[data-theme="green"]{
+  --ph:#3dff8f; --ph2:#b4ffd6; --dim:#4e8f6b; --bg:#030906;
+  --panel:#07130c; --panel2:#0a1a11; --line:#15422a; --ink:#dcffee; --mut:#7fb99b;
+}
+:root[data-theme="amber"]{
+  --ph:#ffbf3f; --ph2:#ffe6ae; --dim:#8f7136; --bg:#0a0703;
+  --panel:#140e05; --panel2:#1a1307; --line:#4a3612; --ink:#fff0d2; --mut:#c9a878;
+}
+:root[data-theme="ice"]{
+  --ph:#41d9ff; --ph2:#c9f2ff; --dim:#3a7d96; --bg:#03080c;
+  --panel:#061118; --panel2:#081720; --line:#12405a; --ink:#e2f7ff; --mut:#84b7cc;
+}
+:root[data-theme="magenta"]{
+  --ph:#ff5ad1; --ph2:#ffc9ef; --dim:#96417e; --bg:#0b040a;
+  --panel:#160814; --panel2:#1d0a1a; --line:#4d1540; --ink:#ffe4f7; --mut:#cc8fbb;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+html,body{overflow-x:hidden}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--font);
+  min-height:100vh; line-height:1.5;
+  transition:background .4s;
+}
+::selection{background:var(--ph);color:var(--bg)}
+:focus-visible{outline:2px solid var(--ph);outline-offset:2px;border-radius:4px}
+
+/* ---- themed scrollbars ---- */
+*{scrollbar-width:thin;scrollbar-color:var(--dim) var(--bg)}
+::-webkit-scrollbar{width:10px;height:8px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px;border:2px solid var(--bg)}
+::-webkit-scrollbar-thumb:hover{background:var(--ph);box-shadow:0 0 8px var(--ph)}
+
+/* ---- background layers ---- */
+#rain{position:fixed;inset:0;z-index:0;opacity:.55;pointer-events:none}
+.aurora{position:fixed;border-radius:50%;pointer-events:none;z-index:1;mix-blend-mode:screen}
+.a1{width:70vw;height:70vw;left:-20vw;top:-25vw;
+  background:radial-gradient(circle,color-mix(in srgb,var(--ph) 12%,transparent) 0%,transparent 65%);
+  animation:drift1 38s ease-in-out infinite alternate}
+.a2{width:60vw;height:60vw;right:-18vw;bottom:-22vw;
+  background:radial-gradient(circle,color-mix(in srgb,var(--cyan) 9%,transparent) 0%,color-mix(in srgb,var(--mag) 5%,transparent) 40%,transparent 68%);
+  animation:drift2 46s ease-in-out infinite alternate}
+@keyframes drift1{to{transform:translate(9vw,7vh) scale(1.12)}}
+@keyframes drift2{to{transform:translate(-8vw,-6vh) scale(1.08)}}
+.vignette{position:fixed;inset:0;z-index:89;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 42%,transparent 52%,rgba(0,0,0,.55) 100%)}
+.scanlines{position:fixed;inset:0;z-index:90;pointer-events:none;opacity:.5;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0 1px,transparent 1px 3px)}
+body.no-scan .scanlines{display:none}
+.flicker{position:fixed;inset:0;z-index:91;pointer-events:none;background:var(--ph);opacity:0;
+  animation:flick 5s steps(1) infinite}
+body.no-flick .flicker{display:none}
+@keyframes flick{
+  0%,100%{opacity:0} 7%{opacity:.018} 7.6%{opacity:0}
+  31%{opacity:.03} 31.4%{opacity:0} 58%{opacity:.015} 58.9%{opacity:0}
+  83%{opacity:.026} 83.5%{opacity:0}
+}
+body::after{content:"";position:fixed;inset:0;z-index:92;pointer-events:none;opacity:.05;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E")}
+#confetti{position:fixed;inset:0;z-index:60;pointer-events:none}
+
+/* ---- fixed top bar ---- */
+.topbar{
+  position:fixed;top:0;left:0;right:0;height:48px;z-index:80;
+  display:flex;align-items:center;gap:14px;padding:0 16px;
+  background:color-mix(in srgb,var(--bg) 78%,transparent);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);font-size:12px;
+}
+.topbar .dots{display:flex;gap:6px}
+.dot{width:10px;height:10px;border-radius:50%}
+.dot.r{background:#ff5f56}.dot.y{background:#ffbd2e}.dot.g{background:#27c93f}
+.topbar .t{color:var(--mut);letter-spacing:1px;white-space:nowrap}
+.topbar .t b{color:var(--ph);text-shadow:0 0 calc(8px*var(--glow)) color-mix(in srgb,var(--ph) 60%,transparent)}
+#clock{flex:1;text-align:center;color:var(--dim);letter-spacing:1px;font-size:11.5px;white-space:nowrap;overflow:hidden}
+#sndBtn{
+  font-family:var(--font);font-size:11px;letter-spacing:1px;cursor:pointer;
+  background:transparent;border:1px solid var(--line);color:var(--ph);
+  padding:5px 11px;border-radius:6px;display:flex;align-items:center;gap:7px;
+  transition:border-color .15s, box-shadow .15s;
+}
+#sndBtn:hover{border-color:var(--ph);box-shadow:0 0 12px -4px var(--ph)}
+#sndBtn .led{width:7px;height:7px;border-radius:50%;background:var(--ph);box-shadow:0 0 6px var(--ph)}
+#sndBtn.off{color:var(--dim)}
+#sndBtn.off .led{background:var(--dim);box-shadow:none}
+
+/* ---- layout ---- */
+main{position:relative;z-index:10;max-width:760px;margin:0 auto;padding:64px 16px 0}
+
+/* ---- CRT console (always visible, sticky) ---- */
+.console{
+  position:sticky;top:56px;z-index:70;margin:0 0 18px;
+  display:flex;align-items:center;gap:16px;padding:9px 14px;
+  background:color-mix(in srgb,var(--panel) 86%,transparent);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:1px solid var(--line);border-radius:10px;font-size:11px;
+  box-shadow:0 12px 32px -14px rgba(0,0,0,.8);
+}
+.console .citem{display:flex;align-items:center;gap:7px;white-space:nowrap;color:var(--mut)}
+.console .clab{letter-spacing:1px;font-size:10px;color:var(--dim)}
+.console select{
+  font-family:var(--font);font-size:11px;background:var(--panel2);color:var(--ink);
+  border:1px solid var(--line);border-radius:6px;padding:3px 6px;cursor:pointer;
+}
+.console select:hover{border-color:var(--ph)}
+.console input[type=range]{
+  -webkit-appearance:none;appearance:none;width:86px;height:4px;border-radius:2px;
+  background:var(--line);cursor:pointer;
+}
+.console input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:14px;height:14px;border-radius:50%;
+  background:var(--ph);box-shadow:0 0 calc(8px*var(--glow)) var(--ph);cursor:grab;
+}
+.console input[type=range]::-moz-range-thumb{
+  width:14px;height:14px;border-radius:50%;border:none;
+  background:var(--ph);box-shadow:0 0 calc(8px*var(--glow)) var(--ph);cursor:grab;
+}
+.tgl{
+  font-family:var(--font);font-size:10px;letter-spacing:1px;cursor:pointer;
+  background:transparent;border:1px solid var(--line);border-radius:6px;
+  color:var(--dim);padding:4px 9px;display:flex;align-items:center;gap:6px;
+  transition:color .15s,border-color .15s;
+}
+.tgl .led{width:6px;height:6px;border-radius:50%;background:var(--dim);transition:all .15s}
+.tgl[aria-pressed="true"]{color:var(--ph);border-color:color-mix(in srgb,var(--ph) 45%,var(--line))}
+.tgl[aria-pressed="true"] .led{background:var(--ph);box-shadow:0 0 6px var(--ph)}
+.tgl:hover{border-color:var(--ph)}
+.abtn{
+  font-family:var(--font);font-size:10.5px;letter-spacing:1px;cursor:pointer;
+  background:transparent;border:1px solid var(--line);border-radius:6px;
+  color:var(--ink);padding:4px 10px;transition:all .15s;white-space:nowrap;
+}
+.abtn:hover{border-color:var(--ph);color:var(--ph);box-shadow:0 0 12px -4px var(--ph)}
+.abtn.demo{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 40%,var(--line))}
+.abtn.demo:hover{border-color:var(--warn);box-shadow:0 0 12px -4px var(--warn)}
+.console .spacer{flex:1}
+
+/* ---- terminal card ---- */
+.card{
+  position:relative;border:1px solid var(--line);border-radius:12px;
+  background:linear-gradient(180deg,var(--panel),var(--panel2));
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--ph) 6%,transparent),
+             0 34px 90px -24px rgba(0,0,0,.9),
+             0 0 70px -26px color-mix(in srgb,var(--ph) 55%,transparent);
+  scroll-margin-top:130px;overflow:hidden;
+}
+.card::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--ph),var(--cyan) 40%,var(--mag) 75%,var(--warn));opacity:.85}
+.cardbar{
+  display:flex;align-items:center;gap:12px;padding:10px 16px;
+  border-bottom:1px solid var(--line);font-size:11px;color:var(--dim);
+}
+.cardbar .dots{display:flex;gap:6px}
+.cardbar .title{flex:1;text-align:center;letter-spacing:1px}
+.cardbody{padding:26px 28px 24px}
+.logo{
+  color:var(--ph);font-size:clamp(7px,2.35vw,15px);line-height:1.25;
+  text-shadow:0 0 calc(10px*var(--glow)) color-mix(in srgb,var(--ph) 65%,transparent);
+  animation:logoGlitch 7s infinite;white-space:pre;overflow:hidden;
+}
+@keyframes logoGlitch{
+  0%,90%,100%{text-shadow:0 0 calc(10px*var(--glow)) color-mix(in srgb,var(--ph) 65%,transparent)}
+  91%{text-shadow:-2px 0 var(--cyan),2px 0 var(--mag)}
+  92.5%{text-shadow:2px 0 var(--cyan),-2px 0 var(--mag)}
+  94%{text-shadow:0 0 calc(10px*var(--glow)) color-mix(in srgb,var(--ph) 65%,transparent)}
+}
+.tagline{margin-top:10px;font-size:13px;color:var(--mut);min-height:20px}
+.cursor{display:inline-block;color:var(--ph);animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.req{margin:14px 0 4px;font-size:11.5px;color:var(--dim)}
+.req b{color:var(--err)}
+
+/* ---- fields ---- */
+.field{margin-top:22px;animation:rise .5s both}
+.field:nth-of-type(1){animation-delay:.08s}
+.field:nth-of-type(2){animation-delay:.18s}
+.field:nth-of-type(3){animation-delay:.28s}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.flabel{display:flex;align-items:flex-start;gap:10px;font-size:13.5px;color:var(--ink)}
+.flabel .num{color:var(--ph);font-size:12px;padding-top:2px;text-shadow:0 0 calc(6px*var(--glow)) color-mix(in srgb,var(--ph) 60%,transparent)}
+.flabel label{flex:1;cursor:pointer}
+.flabel .star{color:var(--err);font-weight:bold}
+.chip{
+  font-size:9.5px;letter-spacing:1.5px;padding:3px 9px;border-radius:999px;
+  border:1px solid var(--line);color:var(--dim);white-space:nowrap;margin-top:1px;
+  transition:all .2s;
+}
+.chip.c-ok{color:var(--ph);border-color:color-mix(in srgb,var(--ph) 55%,transparent);
+  box-shadow:0 0 10px -3px var(--ph)}
+.chip.c-warn{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 55%,transparent)}
+.chip.c-err{color:var(--err);border-color:color-mix(in srgb,var(--err) 60%,transparent);
+  box-shadow:0 0 10px -3px var(--err)}
+.chip.c-v4{color:var(--cyan);border-color:color-mix(in srgb,var(--cyan) 55%,transparent);box-shadow:0 0 10px -3px var(--cyan)}
+.chip.c-v6{color:var(--mag);border-color:color-mix(in srgb,var(--mag) 55%,transparent);box-shadow:0 0 10px -3px var(--mag)}
+.prompt{font-size:11px;color:var(--dim);margin:8px 0 6px}
+.prompt em{color:var(--mut);font-style:normal}
+.field input[type=text]{
+  width:100%;font-family:var(--font);font-size:17px;letter-spacing:1px;
+  color:var(--ph2);caret-color:var(--ph);
+  background:color-mix(in srgb,var(--bg) 72%,black);
+  border:1px solid var(--line);border-radius:8px;padding:13px 15px;
+  transition:border-color .15s, box-shadow .15s;
+}
+.field input[type=text]::placeholder{color:color-mix(in srgb,var(--dim) 65%,transparent);letter-spacing:0}
+.field input[type=text]:focus{outline:none;border-color:var(--ph);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--ph) 14%,transparent),
+             0 0 calc(18px*var(--glow)) -6px var(--ph)}
+.f-ok input[type=text]{border-color:color-mix(in srgb,var(--ph) 45%,var(--line))}
+.f-warn input[type=text]{border-color:color-mix(in srgb,var(--warn) 55%,var(--line))}
+.f-err input[type=text]{border-color:var(--err);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--err) 13%,transparent)}
+.field.reject input[type=text]{border-color:var(--err)!important;
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--err) 22%,transparent),0 0 20px -6px var(--err)!important}
+.field.shake{animation:shake .32s}
+@keyframes shake{
+  0%,100%{transform:none}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}
+  60%{transform:translateX(-4px)}80%{transform:translateX(3px)}
+}
+.meta{display:flex;justify-content:space-between;gap:12px;margin-top:7px;font-size:12px}
+.decode{color:var(--cyan);word-break:break-all;flex:1;min-height:18px}
+.decode .note{color:var(--warn)}
+.decode .good{color:var(--ph)}
+.count{color:var(--dim);white-space:nowrap;font-size:11px;padding-top:1px}
+.errline{min-height:18px;font-size:11.5px;margin-top:3px;letter-spacing:.3px}
+.errline.e-warn{color:var(--warn)}
+.errline.e-err{color:var(--err)}
+.errline.e-ok{color:color-mix(in srgb,var(--ph) 75%,var(--mut))}
+.errline.e-idle{color:var(--dim)}
+.helpbtn{
+  font-family:var(--font);font-size:11.5px;background:none;border:none;cursor:pointer;
+  color:var(--dim);text-decoration:underline dotted;padding:2px 0;margin-top:2px;
+}
+.helpbtn:hover{color:var(--ph)}
+.helppanel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .28s ease}
+.helppanel.open{grid-template-rows:1fr}
+.helppanel>div{overflow:hidden}
+.helprow{display:flex;align-items:center;gap:10px;padding:10px 0 2px;flex-wrap:wrap}
+.helprow input{
+  font-family:var(--font);font-size:16px;color:var(--ink);
+  background:color-mix(in srgb,var(--bg) 72%,black);
+  border:1px solid var(--line);border-radius:6px;padding:8px 11px;flex:1;min-width:150px;
+}
+.helprow input:focus{outline:none;border-color:var(--cyan);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--cyan) 13%,transparent)}
+.helprow .hint{font-size:10.5px;color:var(--dim)}
+.iphint{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap}
+.iphint span{font-size:10.5px;color:var(--dim)}
+.exbtn{
+  font-family:var(--font);font-size:11px;cursor:pointer;background:transparent;
+  border:1px dashed var(--line);border-radius:6px;color:var(--mut);padding:3px 9px;transition:all .15s;
+}
+.exbtn:hover{color:var(--cyan);border-color:var(--cyan)}
+
+/* ---- submit ---- */
+.submitrow{display:flex;align-items:center;gap:18px;margin-top:26px;flex-wrap:wrap}
+.leds{display:flex;gap:12px}
+.leditem{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--dim);letter-spacing:1px}
+.leditem .led{width:9px;height:9px;border-radius:50%;background:var(--line);transition:all .25s}
+.leditem.on{color:var(--ph)}
+.leditem.on .led{background:var(--ph);box-shadow:0 0 8px var(--ph)}
+#submitBtn{
+  font-family:var(--font);font-size:15px;letter-spacing:3px;cursor:pointer;
+  background:transparent;color:var(--ph);border:1px solid var(--ph);border-radius:8px;
+  padding:13px 30px;margin-left:auto;transition:all .18s;
+  text-shadow:0 0 calc(8px*var(--glow)) color-mix(in srgb,var(--ph) 60%,transparent);
+}
+#submitBtn:hover:not(:disabled){background:var(--ph);color:var(--bg);text-shadow:none;
+  box-shadow:0 0 30px -6px var(--ph)}
+#submitBtn:disabled{opacity:.6;cursor:wait}
+#submitBtn.ready{animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{
+  0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--ph) 45%,transparent)}
+  55%{box-shadow:0 0 0 9px transparent}
+}
+.statusline{
+  margin-top:18px;padding-top:13px;border-top:1px dashed var(--line);
+  font-size:12.5px;min-height:20px;color:var(--mut);
+}
+.statusline.s-ok{color:var(--ph)}
+.statusline.s-err{color:var(--err)}
+.statusline.s-warn{color:var(--warn)}
+
+/* ---- receipt ---- */
+#receipt{position:relative;animation:rise .4s both}
+.stamp{
+  position:absolute;top:2px;right:0;transform:rotate(-7deg);
+  border:3px double var(--ph);color:var(--ph);border-radius:6px;
+  padding:5px 12px;font-size:12px;letter-spacing:3px;
+  text-shadow:0 0 calc(8px*var(--glow)) var(--ph);
+  box-shadow:0 0 18px -6px var(--ph), inset 0 0 12px -6px var(--ph);
+}
+.rhead{font-size:17px;color:var(--ph);letter-spacing:1px;
+  text-shadow:0 0 calc(10px*var(--glow)) color-mix(in srgb,var(--ph) 60%,transparent)}
+.rid{font-size:11.5px;color:var(--dim);margin-top:4px;letter-spacing:2px}
+.rlog{margin:18px 0;font-size:12px;color:var(--mut)}
+.rlog div{opacity:0;animation:rise .3s forwards}
+.rlog div:nth-child(1){animation-delay:.05s}
+.rlog div:nth-child(2){animation-delay:.18s}
+.rlog div:nth-child(3){animation-delay:.31s}
+.rlog div:nth-child(4){animation-delay:.44s}
+.rlog b{color:var(--ph)}
+.rgrid{display:grid;grid-template-columns:118px 1fr;gap:9px 14px;font-size:13px;
+  border:1px solid var(--line);border-radius:8px;padding:16px;
+  background:color-mix(in srgb,var(--bg) 55%,transparent)}
+.rgrid dt{color:var(--dim);font-size:10.5px;letter-spacing:1.5px;padding-top:2px}
+.rgrid dd{color:var(--ink);word-break:break-all}
+.rgrid dd small{color:var(--mut);font-size:11px}
+.rgrid dd .v4{color:var(--cyan)} .rgrid dd .v6{color:var(--mag)}
+.rbtns{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.rbtn{
+  font-family:var(--font);font-size:12px;letter-spacing:1.5px;cursor:pointer;
+  background:transparent;border:1px solid var(--line);border-radius:8px;
+  color:var(--ink);padding:10px 16px;transition:all .15s;
+}
+.rbtn:hover{border-color:var(--ph);color:var(--ph);box-shadow:0 0 14px -5px var(--ph)}
+.rbtn.primary{border-color:var(--ph);color:var(--ph)}
+.rbtn.primary:hover{background:var(--ph);color:var(--bg)}
+.rsmall{margin-top:14px;font-size:10.5px;color:var(--dim)}
+
+/* ---- card footer / ticker ---- */
+.cardfoot{
+  display:flex;justify-content:space-between;gap:14px;align-items:center;
+  border-top:1px solid var(--line);padding:9px 16px;font-size:11px;color:var(--dim);
+}
+#ticker{transition:opacity .3s;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#ticker.fade{opacity:0}
+.cardfoot .badge{white-space:nowrap;letter-spacing:1px}
+
+/* ---- page footer ---- */
+.pagefoot{text-align:center;margin:30px 0 44px;font-size:12px;color:var(--dim)}
+.mark{display:inline-flex;align-items:center;gap:8px;color:var(--mut);font-size:14px;margin-bottom:8px}
+.mark svg{filter:drop-shadow(0 0 6px rgba(124,77,255,.6))}
+.pagefoot .credit{margin-top:7px;font-size:10.5px;letter-spacing:1px}
+.pagefoot .credit b{color:var(--ph)}
+
+noscript .ns{display:block;max-width:600px;margin:100px auto;padding:24px;border:1px solid var(--err);
+  color:var(--err);border-radius:10px;text-align:center;font-size:14px}
+
+/* ---- responsive ---- */
+@media (max-width:700px){
+  .cardbody{padding:20px 18px}
+  .console{gap:12px;overflow-x:auto;padding:9px 12px}
+  .console .spacer{display:none}
+  #submitBtn{width:100%;margin-left:0}
+  .stamp{font-size:10px;padding:4px 8px;letter-spacing:2px}
+  .rgrid{grid-template-columns:96px 1fr;padding:13px}
+}
+@media (max-width:620px){ #clock{display:none} .topbar .t{flex:1} }
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .flicker,#rain{display:none!important}
+  html{scroll-behavior:auto}
+  .rlog div{opacity:1}
+}
+</style>
+</head>
+<body>
+
+<canvas id="rain" aria-hidden="true"></canvas>
+<div class="aurora a1" aria-hidden="true"></div>
+<div class="aurora a2" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="scanlines" aria-hidden="true"></div>
+<div class="flicker" aria-hidden="true"></div>
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<header class="topbar">
+  <div class="dots" aria-hidden="true"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
+  <span class="t">STUPIDHACK://<b>SIGNUP-FORM</b></span>
+  <span id="clock" aria-hidden="true">UTC --:--:-- · EPOCH ----------</span>
+  <button id="sndBtn" type="button" aria-pressed="true" title="toggle sound">
+    <span class="led" aria-hidden="true"></span><span id="sndLbl">SND ON</span>
+  </button>
+</header>
+
+<main>
+  <!-- CRT console : live controls, permanently visible -->
+  <section class="console" aria-label="CRT console controls">
+    <div class="citem"><span class="clab">PHOSPHOR</span>
+      <select id="themeSel" aria-label="phosphor theme">
+        <option value="green">GREEN</option><option value="amber">AMBER</option>
+        <option value="ice">ICE</option><option value="magenta">MAGENTA</option>
+      </select>
+    </div>
+    <div class="citem"><span class="clab">GLOW</span>
+      <input type="range" id="glowRange" min="0" max="200" value="100" aria-label="glow intensity">
+    </div>
+    <div class="citem"><button class="tgl" id="scanTgl" type="button" aria-pressed="true"><span class="led"></span>SCAN</button></div>
+    <div class="citem"><button class="tgl" id="flickTgl" type="button" aria-pressed="true"><span class="led"></span>FLICKER</button></div>
+    <div class="citem"><button class="tgl" id="rainTgl" type="button" aria-pressed="true"><span class="led"></span>RAIN</button></div>
+    <div class="spacer"></div>
+    <div class="citem"><button class="abtn demo" id="demoBtn" type="button" title="autofill valid demo data">⚡ DEMO</button></div>
+    <div class="citem"><button class="abtn" id="purgeBtn" type="button" title="clear all fields">⌫ PURGE</button></div>
+  </section>
+
+  <section class="card" id="card">
+    <div class="cardbar">
+      <div class="dots" aria-hidden="true"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
+      <span class="title">signup_form.exe — bash</span><span>80×24</span>
+    </div>
+
+    <div class="cardbody">
+      <pre class="logo" role="img" aria-label="SIGNUP FORM">█▀ █ █▀▀ █▄ █ █ █ █▀█   █▀▀ █▀█ █▀█ █▀▄▀█
+▄█ █ █▄█ █ ▀█ █▄█ █▀▀   █▀  █▄█ █▀▄ █ ▀ █</pre>
+      <p class="tagline"><span id="bootline"></span><span class="cursor">▌</span></p>
+      <p class="req"><b>*</b> Indicates required question — all of them. obviously.</p>
+
+      <form id="form" novalidate>
+        <!-- FIELD 01 : NAME -->
+        <div class="field" id="f-name">
+          <div class="flabel">
+            <span class="num">01</span>
+            <label for="nameIn">Enter name (use only binary) <span class="star">*</span></label>
+            <span class="chip" id="nameChip">IDLE</span>
+          </div>
+          <p class="prompt">guest@stupidform:~$ <em>name --encoding=binary</em></p>
+          <input type="text" id="nameIn" maxlength="256" required inputmode="numeric"
+                 autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+                 placeholder="01000001 01000100 01000001… (just kidding, no spaces)">
+          <div class="meta">
+            <span class="decode" id="nameDecode">letters are a social construct. 0 and 1 are forever.</span>
+            <span class="count" id="nameCount">0/256 bits</span>
+          </div>
+          <p class="errline e-idle" id="nameErr">awaiting bits…</p>
+          <button class="helpbtn" type="button" id="nameHelpBtn">[ fine, i can't do binary — convert it for me ]</button>
+          <div class="helppanel" id="nameHelp"><div>
+            <div class="helprow">
+              <input type="text" id="nameHelper" maxlength="64" placeholder="type your human name here, coward"
+                     autocomplete="off" spellcheck="false" aria-label="human name to encode">
+              <span class="hint">→ live-encodes to UTF-8 binary (max 32 bytes)</span>
+            </div>
+          </div></div>
+        </div>
+
+        <!-- FIELD 02 : UNIX DOB -->
+        <div class="field" id="f-sec">
+          <div class="flabel">
+            <span class="num">02</span>
+            <label for="secIn">Enter number of seconds passed from 1st January, 1970 on your date of birth. <span class="star">*</span></label>
+            <span class="chip" id="secChip">IDLE</span>
+          </div>
+          <p class="prompt">guest@stupidform:~$ <em>dob --unit=seconds --epoch=unix</em></p>
+          <input type="text" id="secIn" maxlength="14" required
+                 autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+                 placeholder="e.g. 892339200 (negative allowed for pre-1970 elders)">
+          <div class="meta">
+            <span class="decode" id="secDecode">yes, we made you do math. no, we won't accept a normal birthday.</span>
+            <span class="count" id="secCount">0 digits</span>
+          </div>
+          <p class="errline e-idle" id="secErr">the epoch is watching.</p>
+          <button class="helpbtn" type="button" id="secHelpBtn">[ i'm bad at math — pick a date instead ]</button>
+          <div class="helppanel" id="secHelp"><div>
+            <div class="helprow">
+              <input type="date" id="dateHelper" min="1900-01-01" aria-label="date of birth to convert">
+              <span class="hint">→ converts to seconds @ 00:00 UTC. the form never has to know.</span>
+            </div>
+          </div></div>
+        </div>
+
+        <!-- FIELD 03 : PUBLIC IP -->
+        <div class="field" id="f-ip">
+          <div class="flabel">
+            <span class="num">03</span>
+            <label for="ipIn">Enter your Public IP (for address) <span class="star">*</span></label>
+            <span class="chip" id="ipChip">IDLE</span>
+          </div>
+          <p class="prompt">guest@stupidform:~$ <em>ip --public --version=any</em></p>
+          <input type="text" id="ipIn" maxlength="45" required
+                 autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+                 placeholder="IPv4 (203.0.113.7) or IPv6 (2001:db8::1)">
+          <div class="meta">
+            <span class="decode" id="ipDecode">we will do absolutely nothing with this. promise.</span>
+            <span class="count" id="ipCount">0/45</span>
+          </div>
+          <p class="errline e-idle" id="ipErr">v4 and v6 both welcome. this form is progressive.</p>
+          <div class="iphint">
+            <span>lost? borrow one:</span>
+            <button class="exbtn" type="button" data-ip="8.8.8.8">8.8.8.8</button>
+            <button class="exbtn" type="button" data-ip="2001:db8::1">2001:db8::1</button>
+          </div>
+        </div>
+
+        <div class="submitrow">
+          <div class="leds" aria-hidden="true">
+            <span class="leditem" id="led0"><span class="led"></span>01</span>
+            <span class="leditem" id="led1"><span class="led"></span>02</span>
+            <span class="leditem" id="led2"><span class="led"></span>03</span>
+          </div>
+          <button id="submitBtn" type="submit"><span id="submitLbl">[ TRANSMIT ]</span></button>
+        </div>
+        <p class="statusline" id="status" role="status" aria-live="polite">&gt; awaiting input. the form judges silently.</p>
+      </form>
+
+      <!-- RECEIPT -->
+      <div id="receipt" hidden>
+        <div class="stamp">ACCEPTED ✓</div>
+        <p class="rhead">✓ TRANSMISSION RECEIVED</p>
+        <p class="rid" id="rId">SUBMISSION #0001</p>
+        <div class="rlog">
+          <div>&gt; packing bits ……………………… <b>OK</b></div>
+          <div>&gt; handshake with 1970 ………… <b>OK</b></div>
+          <div>&gt; verifying you exist ………… <b>PROBABLY</b></div>
+          <div>&gt; writing to /dev/null ………… <b>OK</b></div>
+        </div>
+        <dl class="rgrid">
+          <dt>IDENTITY</dt><dd id="rName">—</dd>
+          <dt>BORN</dt><dd id="rBorn">—</dd>
+          <dt>ADDRESS</dt><dd id="rIp">—</dd>
+          <dt>RECEIVED</dt><dd id="rTime">—</dd>
+        </dl>
+        <div class="rbtns">
+          <button class="rbtn" type="button" id="copyBtn">⧉ COPY RECEIPT</button>
+          <button class="rbtn" type="button" id="dlBtn">↓ DOWNLOAD .TXT</button>
+          <button class="rbtn primary" type="button" id="newBtn">+ NEW TRANSMISSION</button>
+        </div>
+        <p class="rsmall">your data has been stored absolutely nowhere. this form has no backend. it's a hackathon.</p>
+      </div>
+    </div>
+
+    <div class="cardfoot">
+      <span id="ticker">// tip: 01001000 01101001 = "Hi". you're welcome.</span>
+      <span class="badge">3 FIELDS · 0 MERCY</span>
+    </div>
+  </section>
+
+  <footer class="pagefoot">
+    <span class="mark">
+      <svg width="18" height="22" viewBox="0 0 18 22" aria-hidden="true">
+        <rect x="1" y="1" width="16" height="20" rx="2.5" fill="#7c4dff"/>
+        <rect x="4" y="6" width="7" height="1.8" rx=".9" fill="#fff"/>
+        <rect x="4" y="10" width="10" height="1.8" rx=".9" fill="#fff" opacity=".85"/>
+        <rect x="4" y="14" width="8" height="1.8" rx=".9" fill="#fff" opacity=".7"/>
+      </svg>
+      Stupid Forms
+    </span>
+    <p>This content is neither created nor endorsed by Google.</p>
+    <p class="credit">built for <b>STUPIDHACK 01</b> · single file · zero dependencies · 100% organic bits</p>
+  </footer>
+</main>
+
+<noscript><span class="ns">this form requires javascript. it's 2026. enable it, then come back and suffer in binary.</span></noscript>
+
+<script>
+(function(){
+"use strict";
+/* ================= helpers / state ================= */
+const $ = s => document.querySelector(s);
+const root = document.documentElement;
+const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const store = {
+  get(k,d){ try{ const v=localStorage.getItem("sf_"+k); return v===null?d:JSON.parse(v);}catch(e){return d;} },
+  set(k,v){ try{ localStorage.setItem("sf_"+k,JSON.stringify(v)); }catch(e){} }
+};
+const prefs = {
+  theme: store.get("theme","green"),
+  glow:  store.get("glow",100),
+  scan:  store.get("scan",true),
+  flick: store.get("flick",true),
+  rain:  store.get("rain",true),
+  sound: store.get("sound",true)
+};
+
+/* ================= audio (WebAudio, no assets) ================= */
+const audio = { ctx:null, master:null, on:prefs.sound, lastBlip:0 };
+function unlockAudio(){
+  if(!audio.ctx){
+    try{
+      const AC = window.AudioContext||window.webkitAudioContext;
+      if(!AC) return;
+      audio.ctx = new AC();
+      audio.master = audio.ctx.createGain();
+      audio.master.gain.value = audio.on ? 0.5 : 0;
+      audio.master.connect(audio.ctx.destination);
+    }catch(e){}
+  }
+  if(audio.ctx && audio.ctx.state==="suspended") audio.ctx.resume().catch(()=>{});
+}
+document.addEventListener("pointerdown",unlockAudio);
+document.addEventListener("keydown",unlockAudio);
+function beep(freq,dur,type,vol,slide){
+  if(!audio.on||!audio.ctx||audio.ctx.state!=="running") return;
+  try{
+    const t=audio.ctx.currentTime, o=audio.ctx.createOscillator(), g=audio.ctx.createGain();
+    o.type=type||"square"; o.frequency.setValueAtTime(freq,t);
+    if(slide) o.frequency.exponentialRampToValueAtTime(Math.max(30,freq+slide),t+dur);
+    g.gain.setValueAtTime(vol||.06,t);
+    g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    o.connect(g); g.connect(audio.master);
+    o.start(t); o.stop(t+dur+.02);
+  }catch(e){}
+}
+const sndKey   = ()=>{ const n=performance.now(); if(n-audio.lastBlip>45){audio.lastBlip=n; beep(560+Math.random()*160,.03,"square",.045);} };
+const sndBad   = ()=> beep(150,.13,"sawtooth",.09,-70);
+const sndOk    = ()=>{ beep(740,.05,"sine",.07); setTimeout(()=>beep(990,.06,"sine",.07),60); };
+const sndClick = ()=> beep(320,.04,"square",.06);
+const sndArp   = ()=> [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.15,"triangle",.11),i*95));
+
+/* ================= prefs / console wiring ================= */
+const themeSel=$("#themeSel"), glowRange=$("#glowRange");
+const scanTgl=$("#scanTgl"), flickTgl=$("#flickTgl"), rainTgl=$("#rainTgl");
+const sndBtn=$("#sndBtn"), sndLbl=$("#sndLbl");
+let rainColors={ph:"#3dff8f",ph2:"#b4ffd6"};
+function refreshRainColors(){
+  const cs=getComputedStyle(root);
+  rainColors.ph=cs.getPropertyValue("--ph").trim()||rainColors.ph;
+  rainColors.ph2=cs.getPropertyValue("--ph2").trim()||rainColors.ph2;
+}
+function applyPrefs(){
+  root.dataset.theme=prefs.theme; themeSel.value=prefs.theme;
+  root.style.setProperty("--glow",(prefs.glow/100).toFixed(2)); glowRange.value=prefs.glow;
+  document.body.classList.toggle("no-scan",!prefs.scan);
+  document.body.classList.toggle("no-flick",!prefs.flick||reduced);
+  scanTgl.setAttribute("aria-pressed",String(prefs.scan));
+  flickTgl.setAttribute("aria-pressed",String(prefs.flick));
+  rainTgl.setAttribute("aria-pressed",String(prefs.rain));
+  $("#rain").style.display=(prefs.rain&&!reduced)?"":"none";
+  audio.on=prefs.sound;
+  if(audio.master) audio.master.gain.value=audio.on?0.5:0;
+  sndBtn.classList.toggle("off",!audio.on);
+  sndBtn.setAttribute("aria-pressed",String(audio.on));
+  sndLbl.textContent=audio.on?"SND ON":"SND OFF";
+  refreshRainColors();
+}
+themeSel.addEventListener("change",()=>{prefs.theme=themeSel.value;store.set("theme",prefs.theme);applyPrefs();sndClick();});
+glowRange.addEventListener("input",()=>{prefs.glow=+glowRange.value;store.set("glow",prefs.glow);
+  root.style.setProperty("--glow",(prefs.glow/100).toFixed(2));});
+scanTgl.addEventListener("click",()=>{prefs.scan=!prefs.scan;store.set("scan",prefs.scan);applyPrefs();sndClick();});
+flickTgl.addEventListener("click",()=>{prefs.flick=!prefs.flick;store.set("flick",prefs.flick);applyPrefs();sndClick();});
+rainTgl.addEventListener("click",()=>{prefs.rain=!prefs.rain;store.set("rain",prefs.rain);applyPrefs();sndClick();});
+sndBtn.addEventListener("click",()=>{unlockAudio();prefs.sound=!prefs.sound;store.set("sound",prefs.sound);applyPrefs();sndClick();});
+applyPrefs();
+
+/* ================= clock & ticker ================= */
+const clockEl=$("#clock");
+function tickClock(){
+  const d=new Date(), p=n=>String(n).padStart(2,"0");
+  clockEl.textContent=`UTC ${p(d.getUTCHours())}:${p(d.getUTCMinutes())}:${p(d.getUTCSeconds())} · EPOCH ${Math.floor(d.getTime()/1000)}`;
+}
+tickClock(); setInterval(tickClock,1000);
+const tips=[
+  '// tip: 01001000 01101001 = "Hi". you\'re welcome.',
+  "// fun fact: this form has no backend. your secrets die with this tab.",
+  "// 1970 called. it wants its epoch back.",
+  "// binary names are 8× longer and 100% more honest.",
+  "// IPv6: because 4.3 billion addresses wasn't enough hoarding.",
+  "// no cookies. no tracking. just judgment.",
+  "// press ⚡ DEMO to autofill. we won't tell the judges."
+];
+let tipI=0; const ticker=$("#ticker");
+setInterval(()=>{
+  ticker.classList.add("fade");
+  setTimeout(()=>{tipI=(tipI+1)%tips.length;ticker.textContent=tips[tipI];ticker.classList.remove("fade");},300);
+},5200);
+
+/* ================= boot line ================= */
+const bootMsg="> initializing human_enrollment.exe … OK";
+const bootEl=$("#bootline");
+if(reduced){ bootEl.textContent=bootMsg; }
+else{
+  let bi=0; const bt=setInterval(()=>{
+    bootEl.textContent=bootMsg.slice(0,++bi);
+    if(bi>=bootMsg.length) clearInterval(bt);
+  },18);
+}
+
+/* ================= validators ================= */
+function isIPv4(s){
+  const p=s.split(".");
+  if(p.length!==4) return false;
+  return p.every(x=>/^\d{1,3}$/.test(x)&&+x<=255);
+}
+function isIPv6(s){
+  if(!s.includes(":")) return false;
+  const dbl=s.split("::");
+  if(dbl.length>2) return false;
+  const side=(str,allowV4)=>{
+    if(str==="") return {ok:true,n:0};
+    const parts=str.split(":"); let n=0;
+    for(let i=0;i<parts.length;i++){
+      const p=parts[i];
+      if(p.includes(".")){
+        if(!allowV4||i!==parts.length-1||!isIPv4(p)) return {ok:false,n:0};
+        n+=2;
+      }else{
+        if(!/^[0-9a-fA-F]{1,4}$/.test(p)) return {ok:false,n:0};
+        n+=1;
+      }
+    }
+    return {ok:true,n};
+  };
+  if(dbl.length===1){ const r=side(s,true); return r.ok&&r.n===8; }
+  const h=side(dbl[0],false), t=side(dbl[1],true);
+  return h.ok&&t.ok&&(h.n+t.n)<=7;
+}
+function expandV6(s){
+  const ix=s.indexOf("::");
+  const side=str=>{
+    if(!str) return [];
+    return str.split(":").flatMap(p=>{
+      if(p.includes(".")){
+        const o=p.split(".").map(Number);
+        return [((o[0]<<8)|o[1]).toString(16).padStart(4,"0"),((o[2]<<8)|o[3]).toString(16).padStart(4,"0")];
+      }
+      return [p.toLowerCase().padStart(4,"0")];
+    });
+  };
+  if(ix===-1) return side(s).join(":");
+  const H=side(s.slice(0,ix)), T=side(s.slice(ix+2));
+  return [...H,...Array(8-H.length-T.length).fill("0000"),...T].join(":");
+}
+const v4bin=s=>s.split(".").map(o=>(+o).toString(2).padStart(8,"0")).join(".");
+function v4note(s){
+  const o=s.split(".").map(Number);
+  if(o[0]===10||o[0]===127||o[0]===0||(o[0]===172&&o[1]>=16&&o[1]<=31)||(o[0]===192&&o[1]===168)||(o[0]===169&&o[1]===254))
+    return {txt:"private/loopback range — \"public\" is a mindset",warn:true};
+  return {txt:"looks public ✓",warn:false};
+}
+function v6note(s){
+  const e=expandV6(s);
+  if(e==="0000:0000:0000:0000:0000:0000:0000:0001") return {txt:"that's ::1, your own loopback. introspective.",warn:true};
+  if(e.startsWith("fe80")) return {txt:"link-local — barely leaves the room",warn:true};
+  if(e.startsWith("2001:0db8")) return {txt:"documentation range — classy choice",warn:false};
+  return {txt:"128 bits of pure address ✓",warn:false};
+}
+const MIN_SEC=-2208988800, MAX_ABS=8640000000000;
+function decodeName(bits){
+  let out="";
+  for(let i=0;i+8<=bits.length;i+=8){
+    const c=parseInt(bits.slice(i,i+8),2);
+    out+=(c<32||c===127)?"·":String.fromCharCode(c);
+  }
+  return out;
+}
+function humanDate(sec){
+  const d=new Date(sec*1000);
+  const iso=d.toISOString().replace("T"," ").slice(0,19);
+  const day=d.toLocaleDateString("en-US",{weekday:"long",timeZone:"UTC"});
+  const age=((Date.now()-d.getTime())/31557600000).toFixed(1);
+  return {iso,day,age,date:iso.slice(0,10)};
+}
+
+/* ================= field machinery ================= */
+const fields=[
+  { key:"name", wrap:$("#f-name"), input:$("#nameIn"), chip:$("#nameChip"),
+    decode:$("#nameDecode"), count:$("#nameCount"), err:$("#nameErr"), led:$("#led0"),
+    allow:/[^01]/g,
+    idleDecode:"letters are a social construct. 0 and 1 are forever.",
+    idleErr:"awaiting bits…",
+    state:"idle", prev:"idle", data:null, rejectT:0, shakeT:0, typeT:0 },
+  { key:"sec", wrap:$("#f-sec"), input:$("#secIn"), chip:$("#secChip"),
+    decode:$("#secDecode"), count:$("#secCount"), err:$("#secErr"), led:$("#led1"),
+    allow:/[^0-9-]/g, post:v=>v.replace(/(?!^)-/g,""),
+    idleDecode:"yes, we made you do math. no, we won't accept a normal birthday.",
+    idleErr:"the epoch is watching.",
+    state:"idle", prev:"idle", data:null, rejectT:0, shakeT:0, typeT:0 },
+  { key:"ip", wrap:$("#f-ip"), input:$("#ipIn"), chip:$("#ipChip"),
+    decode:$("#ipDecode"), count:$("#ipCount"), err:$("#ipErr"), led:$("#led2"),
+    allow:/[^0-9a-fA-F:.]/g,
+    idleDecode:"we will do absolutely nothing with this. promise.",
+    idleErr:"v4 and v6 both welcome. this form is progressive.",
+    state:"idle", prev:"idle", data:null, rejectT:0, shakeT:0, typeT:0 }
+];
+const statusEl=$("#status"), submitBtn=$("#submitBtn"), submitLbl=$("#submitLbl");
+let submitting=false, lastReceipt=null;
+function setStatus(msg,tone){
+  statusEl.textContent=msg;
+  statusEl.className="statusline"+(tone?" s-"+tone:"");
+}
+function cleanInput(f){
+  const el=f.input, raw=el.value, pos=el.selectionStart??raw.length;
+  const keptBefore=raw.slice(0,pos).replace(f.allow,"").length;
+  let v=raw.replace(f.allow,"");
+  const removed=raw.length-v.length;
+  if(f.post) v=f.post(v);
+  const max=+el.getAttribute("maxlength")||Infinity;
+  if(v.length>max) v=v.slice(0,max);
+  if(v!==raw){
+    el.value=v;
+    const p=Math.min(keptBefore,v.length);
+    try{ el.setSelectionRange(p,p); }catch(e){}
+  }
+  return removed;
+}
+function rejectFlash(f,msg){
+  f.wrap.classList.add("reject");
+  clearTimeout(f.rejectT);
+  f.rejectT=setTimeout(()=>f.wrap.classList.remove("reject"),280);
+  f.err.textContent=msg; f.err.className="errline e-err";
+  sndBad();
+}
+function shake(f){
+  f.wrap.classList.remove("shake"); void f.wrap.offsetWidth;
+  f.wrap.classList.add("shake");
+  clearTimeout(f.shakeT);
+  f.shakeT=setTimeout(()=>f.wrap.classList.remove("shake"),360);
+}
+function evaluate(f,commit){
+  const v=f.input.value;
+  f.data=null;
+  if(f.key==="name"){
+    f.count.textContent=`${v.length}/256 bits`;
+    if(!v){ f.state="idle"; f.msg=f.idleErr; f.dec=f.idleDecode; return; }
+    if(v.length%8!==0){
+      const need=8-(v.length%8);
+      f.state=commit?"err":"warn";
+      f.msg=commit?`NAME MUST BE WHOLE BYTES — ${need} MORE BIT${need>1?"S":""} OR TRIM ${v.length%8}.`
+                  :`${v.length} bits — ${need} more to finish the byte.`;
+      f.dec=`partial: “${decodeName(v)}” <span class="note">+${v.length%8} stray bits</span>`;
+      return;
+    }
+    const name=decodeName(v);
+    f.state="ok"; f.data={name,bits:v};
+    f.msg=`VALID BINARY. ${v.length/8} BYTE${v.length>8?"S":""} OF PURE IDENTITY.`;
+    f.dec=`→ “${name}” <span class="good">✓ decoded</span>`;
+    return;
+  }
+  if(f.key==="sec"){
+    const digits=v.replace("-","").length;
+    f.count.textContent=`${digits} digit${digits===1?"":"s"}`;
+    if(!v||v==="-"){ f.state="idle"; f.msg=f.idleErr; f.dec=f.idleDecode; return; }
+    const n=Number(v), now=Math.floor(Date.now()/1000);
+    if(!Number.isFinite(n)||Math.abs(n)>MAX_ABS){
+      f.state=commit?"err":"warn";
+      f.msg="OUT OF RANGE. EVEN JAVASCRIPT HAS LIMITS."; f.dec="…"; return;
+    }
+    if(n>now){
+      f.state=commit?"err":"warn";
+      f.msg="BORN IN THE FUTURE? TERMINATOR PROTOCOL ENGAGED.";
+      f.dec=`→ ${humanDate(n).date} <span class="note">hasn't happened yet</span>`; return;
+    }
+    if(n<MIN_SEC){
+      f.state=commit?"err":"warn";
+      f.msg="THAT'S BEFORE 1900. YOU ARE EITHER A VAMPIRE OR LYING.";
+      f.dec="…"; return;
+    }
+    const h=humanDate(n);
+    f.state="ok"; f.data={sec:n,...h};
+    f.msg="TIMESTAMP ACCEPTED. 1970 REMEMBERS.";
+    f.dec=`→ ${h.date} (${h.day.toUpperCase()}) · ~${h.age} yrs old`+(n<0?` <span class="good">· PRE-EPOCH LEGEND 🫡</span>`:"");
+    return;
+  }
+  /* ip */
+  f.count.textContent=`${v.length}/45`;
+  if(!v){ f.state="idle"; f.msg=f.idleErr; f.dec=f.idleDecode; return; }
+  if(isIPv4(v)){
+    const note=v4note(v);
+    f.state="ok"; f.data={ip:v,ver:4,note:note.txt};
+    f.msg="VALID IPv4.";
+    f.dec=`→ ${v4bin(v)} <span class="${note.warn?"note":"good"}">· ${note.txt}</span>`;
+    return;
+  }
+  if(isIPv6(v)){
+    const note=v6note(v);
+    f.state="ok"; f.data={ip:v,ver:6,note:note.txt};
+    f.msg="VALID IPv6. LIVING IN THE FUTURE, RESPECT.";
+    f.dec=`→ ${expandV6(v)} <span class="${note.warn?"note":"good"}">· ${note.txt}</span>`;
+    return;
+  }
+  f.state=commit?"err":"warn";
+  f.msg=commit?(v?"NOT AN IP. NOT EVEN CLOSE.":"REQUIRED. THE ASTERISK MEANS IT.")
+              :"not a valid IPv4 / IPv6 yet…";
+  f.dec="…";
+}
+function render(f){
+  f.wrap.classList.remove("f-ok","f-warn","f-err");
+  if(f.state==="ok")f.wrap.classList.add("f-ok");
+  if(f.state==="warn")f.wrap.classList.add("f-warn");
+  if(f.state==="err")f.wrap.classList.add("f-err");
+  f.input.setAttribute("aria-invalid",String(f.state==="err"));
+  const chipMap={idle:["IDLE",""],ok:["VALID","c-ok"],warn:["CHECK","c-warn"],err:["ERROR","c-err"]};
+  let [txt,cls]=chipMap[f.state];
+  if(f.key==="ip"&&f.state==="ok"&&f.data){ txt=f.data.ver===4?"IPv4 ✓":"IPv6 ✓"; cls=f.data.ver===4?"c-v4":"c-v6"; }
+  f.chip.textContent=txt; f.chip.className="chip "+cls;
+  f.err.textContent=f.msg; f.err.className="errline e-"+f.state;
+  f.decode.innerHTML=f.dec;
+  f.led.classList.toggle("on",f.state==="ok");
+  if(f.state==="ok"&&f.prev!=="ok") sndOk();
+  f.prev=f.state;
+  const allOk=fields.every(x=>x.state==="ok");
+  submitBtn.classList.toggle("ready",allOk&&!submitting);
+}
+function pipeline(f,commit){ evaluate(f,commit); render(f); }
+fields.forEach((f,i)=>{
+  f.input.addEventListener("input",()=>{
+    const removed=cleanInput(f);
+    if(removed>0){
+      const msgs={name:`REJECTED ${removed} NON-BINARY CHAR${removed>1?"S":""}. ONLY 0 AND 1 LIVE HERE.`,
+                  sec:"REJECTED: DIGITS ONLY. (leading '-' allowed for pre-1970 elders)",
+                  ip:"REJECTED: HEX DIGITS, ':' AND '.' ONLY."};
+      evaluate(f,false); render(f); rejectFlash(f,msgs[f.key]);
+    }else{ pipeline(f,false); sndKey(); }
+  });
+  f.input.addEventListener("blur",e=>{
+    if(e.relatedTarget&&f.wrap.contains(e.relatedTarget)) return;
+    if(f.state==="warn"&&f.input.value) pipeline(f,true);
+  });
+  f.input.addEventListener("keydown",e=>{
+    if(e.key==="Enter"&&i<fields.length-1){ e.preventDefault(); fields[i+1].input.focus(); }
+  });
+});
+
+/* ================= helpers & chips ================= */
+function toggleHelp(btn,panel){
+  btn.addEventListener("click",()=>{
+    const open=panel.classList.toggle("open");
+    sndClick();
+    if(open){ const inp=panel.querySelector("input"); if(inp) setTimeout(()=>inp.focus(),200); }
+  });
+}
+toggleHelp($("#nameHelpBtn"),$("#nameHelp"));
+toggleHelp($("#secHelpBtn"),$("#secHelp"));
+const enc=new TextEncoder();
+$("#nameHelper").addEventListener("input",e=>{
+  const bytes=enc.encode(e.target.value).slice(0,32);
+  let bits=""; bytes.forEach(b=>bits+=b.toString(2).padStart(8,"0"));
+  fields[0].input.value=bits; pipeline(fields[0],false); sndKey();
+});
+const dateHelper=$("#dateHelper");
+dateHelper.max=new Date().toISOString().slice(0,10);
+dateHelper.addEventListener("change",()=>{
+  const v=dateHelper.value; if(!v) return;
+  const [y,m,d]=v.split("-").map(Number);
+  const sec=Math.floor(Date.UTC(y,m-1,d)/1000);
+  fields[1].input.value=String(sec); pipeline(fields[1],false); sndOk();
+  setStatus("> date converted. your secret is safe with the checkbox.","ok");
+});
+document.querySelectorAll(".exbtn").forEach(b=>{
+  b.addEventListener("click",()=>{
+    fields[2].input.value=b.dataset.ip; pipeline(fields[2],false);
+    fields[2].input.focus(); sndClick();
+  });
+});
+
+/* ================= demo / purge ================= */
+function cancelTyping(){ fields.forEach(f=>{clearInterval(f.typeT);f.typeT=0;}); }
+function typeInto(f,text,done){
+  clearInterval(f.typeT);
+  if(reduced){ f.input.value=text; pipeline(f,false); if(done)done(); return; }
+  let i=0; f.input.value="";
+  f.typeT=setInterval(()=>{
+    i++; f.input.value=text.slice(0,i); pipeline(f,false); sndKey();
+    if(i>=text.length){ clearInterval(f.typeT); f.typeT=0; if(done)done(); }
+  },14);
+}
+const demoNames=["ADA","GRACE","LINUS","ALAN","MARGARET","DENNIS","HACKER","ROOT","NULL","BOB"];
+const rnd=n=>Math.floor(Math.random()*n);
+function demoData(){
+  const name=demoNames[rnd(demoNames.length)];
+  let bits=""; enc.encode(name).forEach(b=>bits+=b.toString(2).padStart(8,"0"));
+  const y=1962+rnd(45), m=rnd(12), d=1+rnd(28);
+  const sec=Math.floor(Date.UTC(y,m,d)/1000);
+  let ip;
+  if(Math.random()<.5){
+    const first=[23,34,52,66,93,104,142,151,185,198][rnd(10)];
+    ip=`${first}.${rnd(256)}.${rnd(256)}.${1+rnd(254)}`;
+  }else{
+    const h=()=>rnd(65536).toString(16);
+    ip=`2001:db8:${h()}:${h()}::${h()}`;
+  }
+  return [bits,String(sec),ip];
+}
+function showForm(){ $("#receipt").hidden=true; $("#form").hidden=false; }
+$("#demoBtn").addEventListener("click",()=>{
+  if(submitting){ setStatus("> transmission in progress. hold your horses.","warn"); return; }
+  showForm(); cancelTyping();
+  const data=demoData(); let done=0;
+  fields.forEach((f,i)=>typeInto(f,data[i],()=>{ if(++done===3) setStatus("> demo data injected. you're welcome, judge.","ok"); }));
+  setStatus("> injecting believable human…","warn"); sndClick();
+});
+function purge(silent){
+  cancelTyping();
+  fields.forEach(f=>{
+    f.input.value=""; f.state="idle"; f.prev="idle"; f.data=null;
+    evaluate(f,false); render(f);
+  });
+  $("#nameHelper").value=""; dateHelper.value="";
+  $("#nameHelp").classList.remove("open"); $("#secHelp").classList.remove("open");
+  if(!silent) setStatus("> all fields purged. a fresh slate of suffering.","warn");
+}
+$("#purgeBtn").addEventListener("click",()=>{
+  if(submitting){ setStatus("> transmission in progress. hold.","warn"); return; }
+  showForm(); purge(false); sndClick(); fields[0].input.focus();
+});
+
+/* ================= submit & receipt ================= */
+let transmitT=[];
+$("#form").addEventListener("submit",e=>{
+  e.preventDefault();
+  if(submitting) return;
+  cancelTyping();
+  let bad=[];
+  fields.forEach(f=>{
+    evaluate(f,true);
+    if(f.state!=="ok"&&!f.input.value){ f.state="err"; f.msg="REQUIRED. THE ASTERISK MEANS IT."; }
+    render(f);
+    if(f.state!=="ok") bad.push(f);
+  });
+  if(bad.length){
+    bad.forEach(shake);
+    bad[0].input.focus();
+    bad[0].wrap.scrollIntoView({block:"center",behavior:reduced?"auto":"smooth"});
+    setStatus(`> TRANSMISSION BLOCKED — ${bad.length} FIELD${bad.length>1?"S":""} OFFENDING.`,"err");
+    sndBad(); return;
+  }
+  submitting=true; submitBtn.disabled=true; submitBtn.classList.remove("ready");
+  const steps=[[0,"> packing bits…"],[300,"> negotiating with 1970…"],[650,"> verifying you exist…"]];
+  transmitT.forEach(clearTimeout); transmitT=[];
+  steps.forEach(([t,m])=>transmitT.push(setTimeout(()=>{setStatus(m,"warn");submitLbl.textContent="[ TRANSMITTING▮ ]";beep(440+t,.06,"square",.05);},t)));
+  transmitT.push(setTimeout(finishTransmit,980));
+});
+function finishTransmit(){
+  const count=store.get("count",0)+1; store.set("count",count);
+  const id=String(count).padStart(4,"0");
+  const now=Math.floor(Date.now()/1000), h=humanDate(now);
+  const n=fields[0].data, s=fields[1].data, ip=fields[2].data;
+  lastReceipt={id,name:n.name,bits:n.bits,sec:s.sec,date:s.date,day:s.day,age:s.age,
+               ip:ip.ip,ver:ip.ver,note:ip.note,recv:now,recvIso:h.iso};
+  $("#rId").textContent=`SUBMISSION #${id} · ${h.iso} UTC`;
+  $("#rName").innerHTML=`“${n.name}” <small>· ${n.bits.length} bits · ${n.bits.length/8} bytes</small>`;
+  $("#rBorn").innerHTML=`${s.date} · ${s.day} · ~${s.age} yrs <small>· epoch ${s.sec}${s.sec<0?" (pre-1970 legend)":""}</small>`;
+  $("#rIp").innerHTML=`<span class="v${ip.ver}">${ip.ip}</span> <small>· IPv${ip.ver} · ${ip.note}</small>`;
+  $("#rTime").innerHTML=`epoch ${now} <small>· ${h.iso} UTC</small>`;
+  $("#form").hidden=true; $("#receipt").hidden=false;
+  $("#card").scrollIntoView({block:"start",behavior:reduced?"auto":"smooth"});
+  submitting=false; submitBtn.disabled=false; submitLbl.textContent="[ TRANSMIT ]";
+  setStatus("> transmission complete.","ok");
+  sndArp(); burstConfetti();
+}
+function receiptText(){
+  const r=lastReceipt; if(!r) return "";
+  return [
+    `STUPID FORM // TRANSMISSION RECEIPT #${r.id}`,
+    "=========================================",
+    `NAME (decoded) : ${r.name}`,
+    `NAME (raw)     : ${r.bits}`,
+    `BORN (epoch)   : ${r.sec}`,
+    `BORN (human)   : ${r.date} (${r.day}) · ~${r.age} yrs`,
+    `IP             : ${r.ip} [IPv${r.ver} · ${r.note}]`,
+    `RECEIVED       : ${r.recv} (${r.recvIso} UTC)`,
+    "-----------------------------------------",
+    "stored: nowhere. backend: none. mercy: 0.",
+    "This content is neither created nor endorsed by Google."
+  ].join("\n");
+}
+$("#copyBtn").addEventListener("click",function(){
+  const btn=this, txt=receiptText();
+  const ok=()=>{btn.textContent="COPIED ✓";sndOk();setTimeout(()=>btn.textContent="⧉ COPY RECEIPT",1500);};
+  const fail=()=>{btn.textContent="COPY FAILED :(";sndBad();setTimeout(()=>btn.textContent="⧉ COPY RECEIPT",1500);};
+  const fallback=()=>{
+    try{
+      const ta=document.createElement("textarea");
+      ta.value=txt; ta.style.cssText="position:fixed;opacity:0";
+      document.body.appendChild(ta); ta.select();
+      const done=document.execCommand("copy"); ta.remove();
+      done?ok():fail();
+    }catch(e){fail();}
+  };
+  if(navigator.clipboard&&navigator.clipboard.writeText)
+    navigator.clipboard.writeText(txt).then(ok).catch(fallback);
+  else fallback();
+});
+$("#dlBtn").addEventListener("click",()=>{
+  try{
+    const blob=new Blob([receiptText()],{type:"text/plain"});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url; a.download=`stupidform-receipt-${lastReceipt?lastReceipt.id:"0000"}.txt`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1200);
+    sndOk();
+  }catch(e){ sndBad(); }
+});
+$("#newBtn").addEventListener("click",()=>{
+  showForm(); purge(true);
+  setStatus("> ready for another victim.","ok"); sndClick();
+  fields[0].input.focus();
+  $("#card").scrollIntoView({block:"start",behavior:reduced?"auto":"smooth"});
+});
+
+/* ================= canvas: binary rain + confetti ================= */
+const rainC=$("#rain"), rainX=rainC.getContext("2d");
+const confC=$("#confetti"), confX=confC.getContext("2d");
+let W=0,H=0,cols=[],parts=[],confCleared=true;
+const FS=14;
+function sizeCanvases(){
+  const dpr=Math.min(window.devicePixelRatio||1,1.5);
+  W=window.innerWidth; H=window.innerHeight;
+  [rainC,confC].forEach(c=>{
+    c.width=Math.round(W*dpr); c.height=Math.round(H*dpr);
+    c.style.width=W+"px"; c.style.height=H+"px";
+    c.getContext("2d").setTransform(dpr,0,0,dpr,0,0);
+  });
+  const n=Math.ceil(W/FS);
+  cols=Array.from({length:n},(_,i)=>({
+    x:i*FS, y:Math.random()*H, sp:60+Math.random()*130, len:6+rnd(10)
+  }));
+  confCleared=true;
+}
+sizeCanvases();
+let resizeT=0;
+window.addEventListener("resize",()=>{clearTimeout(resizeT);resizeT=setTimeout(sizeCanvases,150);});
+function drawRain(dt){
+  rainX.clearRect(0,0,W,H);
+  rainX.font=FS+"px ui-monospace,Menlo,Consolas,monospace";
+  for(const c of cols){
+    c.y+=c.sp*dt;
+    if(c.y-c.len*FS>H){ c.y=-Math.random()*220; c.sp=60+Math.random()*130; c.len=6+rnd(10); }
+    for(let k=0;k<c.len;k++){
+      const y=c.y-k*FS;
+      if(y<-FS||y>H+FS) continue;
+      rainX.globalAlpha=k===0?.5:(1-k/c.len)*.26;
+      rainX.fillStyle=k===0?rainColors.ph2:rainColors.ph;
+      rainX.fillText(Math.random()<.5?"0":"1",c.x,y);
+    }
+  }
+  rainX.globalAlpha=1;
+}
+function burstConfetti(){
+  if(reduced) return;
+  const r=$("#card").getBoundingClientRect();
+  const cx=r.left+r.width/2, cy=Math.max(90,r.top+90);
+  const cs=getComputedStyle(root);
+  const hues=["--ph","--cyan","--mag","--warn","--ph2"].map(v=>cs.getPropertyValue(v).trim());
+  for(let i=0;i<150;i++){
+    const a=Math.random()*Math.PI-Math.PI; /* upward fan */
+    const sp=220+Math.random()*420;
+    parts.push({
+      x:cx+(Math.random()-.5)*120, y:cy,
+      vx:Math.cos(a)*sp*.7, vy:Math.sin(a)*sp,
+      ch:Math.random()<.5?"0":"1", rot:Math.random()*6.3, vr:(Math.random()-.5)*9,
+      size:11+Math.random()*11, hue:hues[rnd(hues.length)], life:1.9+Math.random()*.9
+    });
+  }
+  confCleared=false;
+}
+function stepConfetti(dt){
+  confX.clearRect(0,0,W,H);
+  for(let i=parts.length-1;i>=0;i--){
+    const p=parts[i];
+    p.vy+=780*dt; p.x+=p.vx*dt; p.y+=p.vy*dt; p.rot+=p.vr*dt; p.life-=dt;
+    if(p.life<=0||p.y>H+40){ parts.splice(i,1); continue; }
+    confX.save();
+    confX.translate(p.x,p.y); confX.rotate(p.rot);
+    confX.globalAlpha=Math.min(1,p.life);
+    confX.fillStyle=p.hue;
+    confX.font="bold "+p.size+"px ui-monospace,Menlo,Consolas,monospace";
+    confX.fillText(p.ch,0,0);
+    confX.restore();
+  }
+  confX.globalAlpha=1;
+  if(!parts.length&&!confCleared){ confX.clearRect(0,0,W,H); confCleared=true; }
+}
+let last=performance.now(), rainAcc=0;
+function loop(t){
+  const dt=Math.min(.05,(t-last)/1000); last=t;
+  if(prefs.rain&&!reduced&&!document.hidden){
+    rainAcc+=dt;
+    if(rainAcc>1/30){ drawRain(rainAcc); rainAcc=0; }
+  }
+  if(parts.length) stepConfetti(dt);
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+/* initial paint */
+fields.forEach(f=>{evaluate(f,false);render(f);});
+})();
+</script>
+</body>
+</html>
